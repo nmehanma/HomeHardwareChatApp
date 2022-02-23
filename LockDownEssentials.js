@@ -1,96 +1,164 @@
 const Order = require("./Order");
 
 const OrderState = Object.freeze({
-    WELCOMING:   Symbol("welcoming"),
-    FOOD:   Symbol("food"),
-    LITTER:   Symbol("litter"),
-    EXTRAS:  Symbol("extras")
+  WELCOMING: Symbol("welcoming"),
+  SEASON: Symbol("season"),
+  ITEM1: Symbol("item1"),
+  EXTRAS: Symbol("extras"),
+  EXTRAS2: Symbol("extras2")
 });
 
-module.exports = class LockDownEssentials extends Order{
-    constructor(sNumber, sUrl){
-        super(sNumber, sUrl);
-        this.stateCur = OrderState.WELCOMING;
-        this.sSpecies = "";
-        this.sFood = "";
-        this.sLitter = "";
-        this.sExtras = "";
-    }
-    handleInput(sInput){
-        let aReturn = [];
-        switch(this.stateCur){
-            case OrderState.WELCOMING:
-                this.stateCur = OrderState.FOOD;
-                aReturn.push("Welcome to Richard's Pet Store.");
-                aReturn.push(`For a list of what we sell tap:`);
-                aReturn.push(`${this.sUrl}/payment/${this.sNumber}/`);
-                if(sInput.toLowerCase() == "meow"){
-                  this.sSpecies = "cat";
-                }else if(sInput.toLowerCase() == "woof") {
-                  this.sSpecies = "dog";
-                } else {
-                  this.stateCur = OrderState.WELCOMING;
-                  aReturn.push("Please type MEOW if you have a cat or WOOF if you have a dog.");
-                  break;
-                }
-                aReturn.push("Would you like CANNED or DRY food or NO?");
-                break;
-            case OrderState.FOOD:
-                if(this.sSpecies == "cat"){
-                  this.stateCur = OrderState.LITTER;
-                  aReturn.push("Would you like kitty litter?");
-                }else{
-                  this.stateCur = OrderState.EXTRAS;
-                  aReturn.push("Would you like a TREAT or TOY for your dog?");
-                }
-                if(sInput.toLowerCase()!= "no"){
-                  this.sFood = sInput;
-                }
-                break;
-            case OrderState.LITTER:
-                this.stateCur = OrderState.EXTRAS
-                if(sInput.toLowerCase()!= "no"){
-                  this.sLitter = "organic kitty litter";
-                }
-                aReturn.push("Would you like a TREAT or TOY for your kitty?");
-                break;
-            case OrderState.EXTRAS:
-                if(sInput.toLowerCase() != "no"){
-                    this.sExtras = sInput;
-                }
-                aReturn.push("Thank-you for your order of");
-                this.nTotal = 0;
-                if(this.sSpecies == "cat" && this.sFood.toLowerCase() == "canned"){
-                  aReturn.push("canned cat food");
-                  this.nTotal += 5.99;
-                }else if(this.sSpecies == "cat" && this.sFood.toLowerCase == "dry"){
-                  aReturn.push("dry cat food");
-                  this.nTotal += 2.99
-                }else if(this.sSpecies == "dog" && this.sFood.toLowerCase() == "canned"){
-                  aReturn.push("canned dog food");
-                  this.nTotal += 5.99;
-                }else if(this.sSpecies == "dog" && this.sFood.toLowerCase == "dry"){
-                  aReturn.push("dry dog food");
-                  this.nTotal += 5.99
-                }
-                if(this.sLitter){
-                  aReturn.push(this.sLitter);
-                  this.nTotal += 2.99;
-                }
-                if(this.sExtras){
-                  aReturn.push(this.sExtras);
-                  this.nTotal += 2.99;
-                }
-                aReturn.push(`Your total comes to ${this.nTotal}`);
-                aReturn.push(`We will text you from 519-222-2222 when your order is ready or if we have questions.`)
-                this.isDone(true);
-                break;
+module.exports = class LockDownEssentials extends Order {
+  constructor(sNumber, sUrl) {
+    super(sNumber, sUrl);
+    this.stateCur = OrderState.WELCOMING;
+    this.sSeason = "";
+    this.sItem1 = "";
+    this.sExtras = "";
+    this.sExtras2 = "";
+  }
+  handleInput(sInput) {
+    let aReturn = [];
+    switch (this.stateCur) {
+      case OrderState.WELCOMING:
+        this.stateCur = OrderState.SEASON;
+        aReturn.push("Welcome to Conestoga's Home Hardware.");
+        aReturn.push(`For a list of what we sell tap:`);
+        aReturn.push(`${this.sUrl}/payment/${this.sNumber}/`);
+        aReturn.push(
+          "Please type WINTER if you are looking for Winter essentials or SUMMER if you are looking for Summer essentials."
+        );
+        break;
+      case OrderState.SEASON:
+        this.sSeason = sInput;
+        if (sInput.toLowerCase() == "winter") {
+          this.stateCur = OrderState.WINTER;
+          aReturn.push(
+            "What Winter essential item would you like, select SHOVEL for Conestoga's Ergonomics Snow Shovel or SALT for Conestoga's Ice Melter, or select BACK to go back"
+          );
+        } else if (sInput.toLowerCase() == "summer") {
+          this.stateCur = OrderState.SUMMER;
+          aReturn.push(
+            "What Summer essential item would you like, select BUG-SPRAY for Conestoga's Bug Spray or TOP-SOIL for John's Turf Builder, or select BACK to go back"
+          );
+        } else {
+          aReturn.push(
+            "Please make a valid selection, type WINTER if you are looking for Winter essentials or SUMMER if you are looking for Summer essentials. "
+          );
         }
-        return aReturn;
+        break;
+      case OrderState.WINTER:
+        if (sInput.toLowerCase() == "shovel") {
+          this.stateCur = OrderState.EXTRAS;
+          this.sItem1 = "shovel";
+        } else if (sInput.toLowerCase() == "salt") {
+          this.stateCur = OrderState.EXTRAS;
+          this.sItem1 = "salt";
+        } else if (sInput.toLowerCase() == "back") {
+          this.stateCur = OrderState.SEASON;
+          aReturn.push(
+            "Please type WINTER if you are looking for Winter essentials or SUMMER if you are looking for Summer essentials."
+          );
+          break;
+        } else {
+          aReturn.push(
+            "Please make a valid selection, either SALT, SHOVEL, or BACK"
+          );
+          break;
+        }
+        aReturn.push(
+          "Would you like a 6 pack of AA batteries on your way to checkout? Select Yes or No"
+        );
+        break;
+      case OrderState.SUMMER:
+        if (sInput.toLowerCase() == "bug-spray") {
+          this.stateCur = OrderState.EXTRAS;
+          this.sItem1 = "bug-spray";
+        } else if (sInput.toLowerCase() == "top-soil") {
+          this.stateCur = OrderState.EXTRAS;
+          this.sItem1 = "top-soil";
+        } else if (sinput.toLowerCase() == "back") {
+          this.stateCur = OrderState.SEASON;
+          aReturn.push(
+            "Please type WINTER if you are looking for Winter essentials or SUMMER if you are looking for Summer essentials."
+          );
+          break;
+        } else {
+          aReturn.push(
+            "Please make a valid selection, either bug-spray, top-soil, or back"
+          );
+        }
+        aReturn.push(
+          "Would you like a 6 pack of AA batteries on your way to checkout? Select Yes or No"
+        );
+        break;
+      case OrderState.EXTRAS:
+        if (sInput.toLowerCase() == "yes") {
+          this.sExtras = sInput;
+          this.stateCur = OrderState.EXTRAS2;
+        } else if (sInput.toLowerCase() == "no") {
+          this.stateCur = OrderState.EXTRAS2;
+        } else {
+          aReturn.push("Invalid selection, please select either yes or no");
+          break;
+        }
+        aReturn.push(
+          "Would you like warranty on your purchase today? Select YES or NO"
+        );
+        break;
+      case OrderState.EXTRAS2:
+        if (sInput.toLowerCase() == "yes") {
+          this.sExtras2 = sInput;
+        } else if (sInput.toLowerCase() == "no") {
+          this.SExtras2 = "";
+        } else {
+          aReturn.push("Invalid selection, please select either yes or no");
+          break;
+        }
+        aReturn.push("Thank-you for your order of");
+        this.nTotal = 0;
+        if (this.sSeason == "winter" && this.Item1.toLowerCase() == "shovel") {
+          aReturn.push("Conestoga's Ergonomics Snow Shovel 22-In");
+          this.nTotal += 35.99;
+        } else if (
+          this.sSpecies == "summer" &&
+          this.Item1.toLowerCase == "salt"
+        ) {
+          aReturn.push("Conestoga's Ice Melter (Salt) 10kg");
+          this.nTotal += 9.99;
+        } else if (
+          this.sSeason == "summer" &&
+          this.sItem1.toLowerCase() == "bugspray"
+        ) {
+          aReturn.push("Bug Spray");
+          this.nTotal += 9.99;
+        } else if (
+          this.sSpecies == "summer" &&
+          this.sFood.toLowerCase == "topsoil"
+        ) {
+          aReturn.push("John's Turf Builder (Top Soil) 42.5 L");
+          this.nTotal += 5.99;
+        }
+        if (this.sExtras) {
+          aReturn.push("6 pack of AA batteries");
+          this.nTotal += 6.99;
+        }
+        if (this.sExtras2) {
+          aReturn.push("Warranty with your purchase");
+          this.nTotal += 1.99;
+        }
+        aReturn.push(`Your total comes to ${this.nTotal}`);
+        aReturn.push(
+          `We will text you from 519-222-2222 when your order is ready or if we have questions.`
+        );
+        this.isDone(true);
+        break;
     }
-    renderForm(){
-      // your client id should be kept private
-      return(`
+    return aReturn;
+  }
+  renderForm() {
+    // your client id should be kept private
+    return `
       <html>
       <head>
           <meta content="text/html; charset=UTF-8" http-equiv="content-type">
@@ -421,7 +489,6 @@ module.exports = class LockDownEssentials extends Order{
           <p class="c3 c14"><span class="c2"></span></p>
       </body>
       
-      </html>      `);
-  
-    }
-}
+      </html>      `;
+  }
+};
