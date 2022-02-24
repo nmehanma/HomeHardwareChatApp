@@ -130,7 +130,7 @@ module.exports = class LockDownEssentials extends Order {
           aReturn.push("Conestoga's Ice Melter (Salt) 10kg");
           this.nTotal += 15.99;
         } else if (this.sSeason == "summer" && this.sItem1 == "bugspray") {
-          aReturn.push("Bug Spray");
+          aReturn.push("Conestoga’s Bug Spray (175ml)");
           this.nTotal += 9.99;
         } else if (this.sSeason == "summer" && this.sItem1 == "topsoil") {
           aReturn.push("John's Turf Builder (Top Soil) 42.5 L");
