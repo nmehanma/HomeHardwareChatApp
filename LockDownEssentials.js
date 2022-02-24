@@ -44,7 +44,7 @@ module.exports = class LockDownEssentials extends Order {
         } else if (sInput.toLowerCase() == "summer") {
           this.stateCur = OrderState.SUMMER;
           aReturn.push(
-            "What Summer essential item would you like, select BUGSPRAY for Conestoga's Bug Spray - $9.99 or TOPSOIL for John's Turf Builder - $6.99, or select BACK to go back"
+            "What Summer essential item would you like, select BUGSPRAY for Conestoga's Bug Spray - $9.99 or TOPSOIL for John's Turf Builder - $5.99, or select BACK to go back"
           );
         } else {
           aReturn.push(
