@@ -1,3 +1,4 @@
+//Author Najeam Mehanmal - 7457195
 const Order = require("./Order");
 
 const OrderState = Object.freeze({
@@ -75,12 +76,12 @@ module.exports = class LockDownEssentials extends Order {
         );
         break;
       case OrderState.SUMMER:
-        if (sInput.toLowerCase() == "bug-spray") {
+        if (sInput.toLowerCase() == "bugspray") {
           this.stateCur = OrderState.EXTRAS;
-          this.sItem1 = "bug-spray";
-        } else if (sInput.toLowerCase() == "top-soil") {
+          this.sItem1 = "bugspray";
+        } else if (sInput.toLowerCase() == "topsoil") {
           this.stateCur = OrderState.EXTRAS;
-          this.sItem1 = "top-soil";
+          this.sItem1 = "topsoil";
         } else if (sInput.toLowerCase() == "back") {
           this.stateCur = OrderState.SEASON;
           aReturn.push(
@@ -108,7 +109,7 @@ module.exports = class LockDownEssentials extends Order {
           break;
         }
         aReturn.push(
-          "Would you like warranty on your purchase today? Select YES or NO"
+          "Would you like warranty on your purchase for an additonal $1.99 today? Select YES or NO"
         );
         break;
       case OrderState.EXTRAS2:
@@ -127,8 +128,8 @@ module.exports = class LockDownEssentials extends Order {
           this.nTotal += 35.99;
         } else if (this.sSeason == "winter" && this.sItem1 == "salt") {
           aReturn.push("Conestoga's Ice Melter (Salt) 10kg");
-          this.nTotal += 9.99;
-        } else if (this.sSeason == "summer" && this.sItem1 == "bug-spray") {
+          this.nTotal += 15.99;
+        } else if (this.sSeason == "summer" && this.sItem1 == "bugspray") {
           aReturn.push("Bug Spray");
           this.nTotal += 9.99;
         } else if (this.sSeason == "summer" && this.sItem1 == "topsoil") {
